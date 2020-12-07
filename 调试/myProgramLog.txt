@@ -1,0 +1,16 @@
+ 2018-02-02 17:12:43,602 - CRITICAL- The program is unable to recover!
+ 2018-02-02 17:13:17,279 - DEBUG- Start of program
+ 2018-02-02 17:13:17,279 - DEBUG- Start of factorial(5)
+ 2018-02-02 17:13:17,279 - DEBUG- i is 0, total is 0
+ 2018-02-02 17:13:17,280 - DEBUG- i is 1, total is 0
+ 2018-02-02 17:13:17,280 - DEBUG- i is 2, total is 0
+ 2018-02-02 17:13:17,280 - DEBUG- i is 3, total is 0
+ 2018-02-02 17:13:17,280 - DEBUG- i is 4, total is 0
+ 2018-02-02 17:13:17,280 - DEBUG- i is 5, total is 0
+ 2018-02-02 17:13:17,280 - DEBUG- End of factorial(5)
+ 2018-02-02 17:13:17,280 - DEBUG- End of program
+ 2018-02-02 17:13:17,280 - DEBUG- Some debugging details.
+ 2018-02-02 17:13:17,280 - INFO- The logging module is working.
+ 2018-02-02 17:13:17,281 - WARNING- An error message is about to be logged.
+ 2018-02-02 17:13:17,281 - ERROR- An error has occurred.
+ 2018-02-02 17:13:17,281 - CRITICAL- The program is unable to recover!
