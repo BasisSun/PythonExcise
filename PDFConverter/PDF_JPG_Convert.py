@@ -21,12 +21,12 @@ def pic2pdf():
 
 
 def rightinput(desc):
-    flag=True
+    flag = True
     while(flag):
         instr = input(desc)
         try:
             intnum = eval(instr)
-            if type(intnum)==int:
+            if type(intnum) == int:
                 flag = False
         except:
             print('请输入正整数！')
@@ -34,17 +34,14 @@ def rightinput(desc):
     return intnum
 
 
-
-
-
 if __name__ == '__main__':
     a = int(input("请输入要进行的操作：\n1：图片（jpg）转PDF\n2：PDF转图片\n"))
-    
+
     if(a == 1):
         pic2pdf()
 
     elif(a == 2):
-        pdffile = glob.glob("*.pdf")[0]                        #只选第一个
+        pdffile = glob.glob("*.pdf")[0]  # 只选第一个
         doc = fitz.open(pdffile)
 
         flag = rightinput("输入：1：全部页面；2：选择页面\t")
@@ -61,10 +58,10 @@ if __name__ == '__main__':
             rotate = int(0)
             trans = fitz.Matrix(zoom / 100.0, zoom / 100.0).preRotate(rotate)
             pm = page.getPixmap(matrix=trans, alpha=False)
-            
+
             pm.writePNG('%s.png' % str(pg+1))
 
-        pngfiles = glob.glob("*.png")  #全部转换成JPG
+        pngfiles = glob.glob("*.png")  # 全部转换成JPG
 
         for pngfile in pngfiles:
             img = Image.open(pngfile)
@@ -72,8 +69,4 @@ if __name__ == '__main__':
             output_img_path = str[0] + ".jpg"
             print(output_img_path)
             img.save(output_img_path)
-            os.remove(pngfile) #删除PNG文件
-
-
-        
-
+            os.remove(pngfile)  # 删除PNG文件
