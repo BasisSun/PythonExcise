@@ -6,7 +6,17 @@ from PIL import Image
 
 def pic2pdf():
     doc = fitz.open()
-    for img in sorted(glob.glob("*.jpg")):  # 读取图片，确保按文件名排序
+    list_img = glob.glob("*.jpg")
+
+    if(len(list_img)==0):
+        list_img = glob.glob("*.jpeg")
+        if(len(list_img)==0):
+            list_img = glob.glob("*.png")
+            if(len(list_img)==0):
+                input("本目录下未找到有效图片文件，支持.jpg，.jpeg，.png")
+                return
+
+    for img in sorted(list_img):  # 读取图片，确保按文件名排序
         print(img)
         imgdoc = fitz.open(img)                 # 打开图片
         pdfbytes = imgdoc.convertToPDF()        # 使用图片创建单页的 PDF
