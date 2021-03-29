@@ -1,5 +1,6 @@
-#coding=gbk
-from flask import Flask
+# coding=gbk
+from flask import Flask, request
+import json
 app = Flask(__name__)
 
 
@@ -10,6 +11,20 @@ def index():
     #     "data": "welcome to use flask."
     # }
     return 'hello word!'
+
+
+@app.route('/tph/service/cycle/test.json', methods=['POST'])
+def PrintPost():
+    if request.method == 'POST':
+        data = request.get_data()
+        print(data)
+        json_data = json.loads(data.decode("utf-8"))
+        print(json_data)
+        return {
+            "msg": "success",
+            "value": "0",
+            "code":200
+        }
 
 
 if __name__ == '__main__':
