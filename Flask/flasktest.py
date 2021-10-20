@@ -23,7 +23,8 @@ def PrintPost():
         return {
             "msg": "success",
             "value": "0",
-            "code":200
+            "code":200,
+            "state":"1"
         }
 
 
