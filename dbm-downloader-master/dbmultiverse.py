@@ -1,12 +1,14 @@
 #! python3
 # Downloads all the english images/pages for Dragonball Multiverse.
 
-import requests, os, bs4
+import requests
+import os
+import bs4
 
 __author__ = "Shafqat Dulal"
 __version__ = "1.0.0"
 
-url = "http://www.dragonball-multiverse.com/en/chapters.html"
+url = "https://www.dragonball-multiverse.com/cn/chapters.html?comic=page"
 os.makedirs('dbm', exist_ok=True)
 
 # Find the last page, then work from there.
@@ -26,7 +28,8 @@ while lastPageFinished == False:
     soup = bs4.BeautifulSoup(res.text)
     imageElem = soup.select('#balloonsimg img')
     if (len(imageElem) != 0):
-        imageUrl = 'http://www.dragonball-multiverse.com' + soup.select('#balloonsimg img')[0].get('src')
+        imageUrl = 'http://www.dragonball-multiverse.com' + \
+            soup.select('#balloonsimg img')[0].get('src')
         print('Downloading image %s...' % imageUrl)
         res = requests.get(imageUrl)
         res.raise_for_status()
