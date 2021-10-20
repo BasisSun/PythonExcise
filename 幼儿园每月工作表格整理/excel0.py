@@ -76,6 +76,8 @@ if __name__ == '__main__':
     holidays=input("请输入本月长假期,用逗号隔开（如：1-7,20-23）；")
     list_holidays = str_to_list(holidays)
 
+    list_casual_leave = []     #事假记录
+
     print("开始进行"+str_path+"的处理")
 
     wb_path = openpyxl.load_workbook(str(path_file))
@@ -95,14 +97,32 @@ if __name__ == '__main__':
 
     i = path_date_rownum +1 #第一个学生从此行开始
 
-    print("请输入下面学生的缺席日期，用英文逗号隔开，并回车（例如：9,11,15-18）")
+    print("请输入下面学生的缺席日期，用英文逗号隔开，并回车（例如：9,11,15-18）,输入 ch 将撤销并回到上一次输入")
 
     while path_sheet.cell(row=i, column=1).value == i-path_date_rownum :
         
         hitString =  str(path_sheet.cell(row=i, column=1).value)+""+str(path_sheet.cell(row=i, column=2).value)+"："
-        abs_day = input(hitString)
+        print(hitString)
+
+        abs_day = input("    请输入病假日期：") 
+
+        if abs_day == "ch" and i > path_date_rownum +1:
+            i = i-1
+            list_casual_leave.pop()
+            continue
+
         list_abs_day = str_to_list(abs_day)
-        #print(list_abs_day)
+        
+        str_casual_leave_day = input("    请输入事假日期：")
+        if str_casual_leave_day == "ch" and i > path_date_rownum +1:
+            i = i-1
+            list_casual_leave.pop()
+            continue
+
+        casual_leave_day = str_to_list(str_casual_leave_day)
+        list_casual_leave.append(casual_leave_day)
+
+        list_abs_day = list_abs_day + casual_leave_day
 
         j = path_date_colnum # 每月1日所在列
 
@@ -152,11 +172,11 @@ if __name__ == '__main__':
                 count_true = 0
                 begin_true = j
 
-                valid_sec = 1 #用于记录是否该区间段为纯假期放假
+                valid_sec = 1 #用于记录是否该区间段为纯病假期放假
 
                 while path_sheet.cell(row=i, column=j).value == "√":
                     anyday=datetime.datetime(int(str_year),int(str_month),j-2).strftime("%w") #判断当天是周几
-                    if anyday=='6' or anyday=='0' or str(j-2) in list_holidays:
+                    if anyday=='6' or anyday=='0' or str(j-2) in list_holidays or str(j-2) in list_casual_leave[i-path_date_rownum-1]:
                         health_sheet.cell(row= i - path_date_rownum + health_date_rownum , column = j-path_date_colnum+health_date_colnum,value="√")
                     else:
                         valid_sec =0
