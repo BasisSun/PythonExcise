@@ -28,7 +28,7 @@ res = requests.get(url)
 res.raise_for_status()
 
 soup = bs4.BeautifulSoup(res.text, features="lxml")
-lastPageLink = soup.select('.chapters p a')[-1]
+lastPageLink = soup.select('.cadrelect.chapter.after1000 p a')[-1]
 print("There are currently " + lastPageLink.text + " pages.")
 
 
