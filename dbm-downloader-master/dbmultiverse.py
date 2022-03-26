@@ -54,7 +54,7 @@ while lastPageFinished == False:
         res.raise_for_status()
 
         imageFile = open(os.path.join(os.getcwd(),
-                                      '\dbm\\', os.path.basename(str(presentPage)+".jpg")), 'wb')
+                                      '/dbm/', str(presentPage)+".jpg"), 'wb')
         for chunk in res.iter_content(100000):
             imageFile.write(chunk)
         imageFile.close()
@@ -66,8 +66,7 @@ while lastPageFinished == False:
     if not (EndPage in url):
         nextLink = soup.select('a[rel="next"]')
         if(len(nextLink) != 0):
-            url = "http://www.dragonball-multiverse.com" +
-            nextLink[0].get('href')
+            url = "http://www.dragonball-multiverse.com" + nextLink[0].get('href')
             print(url)
             presentPage = presentPage+1
         else:
