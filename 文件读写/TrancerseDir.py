@@ -11,7 +11,7 @@ def search_file(start_dir, target) :
             search_file(each_file, target) # 递归调用
             os.chdir(os.pardir) # 递归调用后切记返回上一层目录
 
-start_dir = "C:/Users/Administrator/Desktop/CATIA逆向光盘刻录文件/文档" #input('请输入待查找的初始目录：')
+start_dir = "E:/孙根基个人备份转移/文档" #input('请输入待查找的初始目录：')
 program_dir = os.getcwd()
 
 target = ['.mp4', '.avi', '.rmvb']
