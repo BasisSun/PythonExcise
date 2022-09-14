@@ -12,7 +12,7 @@ def index():
     # }
     return 'hello word!'
 
-# 博谐接口
+# 邦文接口
 @app.route('/type=getUserInfoByCardNumForGLC&cardNum=9F4EC424', methods=['GET', ])
 def CardLogin():
     return {
@@ -35,7 +35,7 @@ def CardLogin():
     #     "msg": "success",
     #     "data": "welcome to use flask."
     
-#??г??????
+#博谐接口
 @app.route('/userinfo', methods=['GET', ])
 def BoxieLogin():
 
@@ -61,7 +61,7 @@ def BoxieLogin():
     #     "msg": "success",
     #     "data": "welcome to use flask."
 
-
+#邦文上传
 @app.route('/tph/service/cycle/test.json', methods=['POST'])
 def PrintPost():
     if request.method == 'POST':
@@ -78,5 +78,5 @@ def PrintPost():
 
 
 if __name__ == '__main__':
-    # '0.0.0.0'???????????????豸??????????
+    # '0.0.0.0'代表在本地服务器上并以局域网形式访问
     app.run(host='0.0.0.0', port=5000)
