@@ -1,4 +1,4 @@
-# coding=gbk
+# coding=UTF8
 from flask import Flask, request
 import json
 app = Flask(__name__)
@@ -12,27 +12,51 @@ def index():
     # }
     return 'hello word!'
 
-# °îÎÄµÇÂ¼
-
-
+# åšè°æ¥å£
 @app.route('/type=getUserInfoByCardNumForGLC&cardNum=9F4EC424', methods=['GET', ])
 def CardLogin():
     return {
         "birthday": "1953-12-22",
         "sex": 2,
         "risk": 0,
-        "username": "ºé¸ùĞÖ",
+        "username": "anni",
         "subver": 0,
         "unitprice": 0.0,
         "addver": 0,
         "error": "",
         "height": 163.0,
         "mainver": 0,
-        "weight": 52.6,
+        "weight": 52,
         "userid": 6,
         "vicever": 0,
         "hrrest": 0,
-        "ntrname": "ºé¸ùĞÖ"}
+        "ntrname": "å¼ ä¸‰"}
+
+    #     "msg": "success",
+    #     "data": "welcome to use flask."
+    
+#??Ğ³??????
+@app.route('/userinfo', methods=['GET', ])
+def BoxieLogin():
+
+    user = request.args.get('username')
+    print(user)
+    return {
+        "birthday": "1994-12-22",
+        "sex": 2,
+        "risk": 0,
+        "username": "anni",
+        "subver": 0,
+        "unitprice": 0.0,
+        "addver": 0,
+        "error": "",
+        "height": 163.0,
+        "mainver": 0,
+        "weight": 52,
+        "userid": 6,
+        "vicever": 0,
+        "hrrest": 0,
+        "ntrname": "å¼ ä¸‰"}
 
     #     "msg": "success",
     #     "data": "welcome to use flask."
@@ -54,5 +78,5 @@ def PrintPost():
 
 
 if __name__ == '__main__':
-    # '0.0.0.0'µÄÄ¿µÄÊÇÔÊĞí±ğµÄÉè±¸Í¨¹ıÍøÂç·ÃÎÊ
+    # '0.0.0.0'???????????????è±¸??????????
     app.run(host='0.0.0.0', port=5000)

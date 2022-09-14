@@ -3,32 +3,20 @@ import glob
 import os
 from PIL import Image
 
-output_file = "输出文件.pdf"
-
 
 def pic2pdf():
     doc = fitz.open()
-    list_img = glob.glob("*.jpg")
-
-    if(len(list_img) == 0):
-        list_img = glob.glob("*.jpeg")
-        if(len(list_img) == 0):
-            list_img = glob.glob("*.png")
-            if(len(list_img) == 0):
-                input("本目录下未找到有效图片文件，支持.jpg，.jpeg，.png")
-                return
-
-    for img in sorted(list_img):  # 读取图片，确保按文件名排序
+    for img in sorted(glob.glob("*.jpg")):  # 读取图片，确保按文件名排序
         print(img)
         imgdoc = fitz.open(img)                 # 打开图片
         pdfbytes = imgdoc.convertToPDF()        # 使用图片创建单页的 PDF
         imgpdf = fitz.open("pdf", pdfbytes)
         doc.insertPDF(imgpdf)                   # 将当前页插入文档
 
-    if os.path.exists(output_file):
-        os.remove(output_file)
+    if os.path.exists("合成结果.pdf"):
+        os.remove("合成结果.pdf")
 
-    doc.save(output_file)                   # 保存pdf文件
+    doc.save("合成结果.pdf")                   # 保存pdf文件
     doc.close()
 
 
@@ -47,7 +35,7 @@ def rightinput(desc):
 
 
 if __name__ == '__main__':
-    a = int(input("请输入要进行的操作：\n1：图片转PDF\n2：PDF转图片\n3：PDF截取\n4：PDF合并\n"))
+    a = int(input("请输入要进行的操作：\n1：图片（jpg）转PDF\n2：PDF转图片\n3：PDF截取\n4：PDF合并\n"))
 
     if(a == 1):
         pic2pdf()
@@ -91,9 +79,11 @@ if __name__ == '__main__':
         strat = rightinput('输入起始页面：') - 1
         totaling = rightinput('输入结束页面：')
 
-        doc.select(range(strat, totaling))
+        doc0 = fitz.Document()  #空白文档
+        doc0.insert_pdf(doc,strat,totaling)
 
-        doc.save(output_file)                   # 保存pdf文件
+        doc0.save("截取结果.pdf")                   # 保存pdf文件
+        doc0.close()
         doc.close()
 
     elif(a == 4):
@@ -108,7 +98,7 @@ if __name__ == '__main__':
 
             doc0.insert_pdf(doc)
 
-        doc0.save(output_file)                   # 保存pdf文件
+        doc0.save("合并结果.pdf")                   # 保存pdf文件
         doc0.close()
 
     input("操作完成，回车推出！")
