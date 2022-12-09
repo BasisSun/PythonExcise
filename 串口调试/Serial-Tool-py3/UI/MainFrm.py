@@ -79,6 +79,11 @@ class MainFrame(object):
         self.serial_frm.frm_debug_cut_btn["command"] = self.CutMove
         self.serial_frm.frm_debug_stop_btn["command"] = self.StopMove
 
+        self.serial_frm.frm_pump_prepare_btn["command"] = self.PumpPrePare
+        self.serial_frm.frm_pump_extract_btn["command"] = self.PumpExtract
+        self.serial_frm.frm_pump_exe_btn["command"] = self.PumpExe
+        self.serial_frm.frm_cutting_exe_btn["command"] = self.CuttingExe
+
 
     def Toggle(self, event=None):
         '''
@@ -145,6 +150,31 @@ class MainFrame(object):
         stop move
         '''
         pass
+
+    def PumpPrePare(self):
+        # ...
+        # PrePare the bubble Pump 
+        # ...
+        pass
+
+    def PumpExtract(self):
+        # ...
+        # Extract the bubble Pump 
+        # ...
+        pass
+
+    def PumpExe(self):
+        # ...
+        # PrePare and Extract the bubble Pump 
+        # ...
+        pass
+
+    def CuttingExe(self):
+    # ...
+    # cutting paper using ultrasound knife
+    # ...
+        pass
+
 
 
     def start_thread_timer(self, callback, timer=1):

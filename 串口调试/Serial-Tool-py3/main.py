@@ -161,6 +161,75 @@ class MainSerialTool(MainFrame):
         '''
         self.start_thread_target(self.thread_Cutting,"CuttingThread")
 
+
+    def PumpPrePare(self):
+        # ...
+        # PrePare the bubble Pump 
+        # ...
+
+        #打开泡沫泵
+        send_data = "0506010100"+"64"+"FEFF"
+        b_data = bytearray.fromhex(send_data) 
+        self.ser.writeBytes(b_data)
+
+        #0.1s后打开蠕动泵0 50%转速
+        send_data = "0506000100"+"32"+"FEFF"
+        b_data = bytearray.fromhex(send_data)
+        time.sleep(0.1)
+        self.ser.writeBytes(b_data)
+
+        #指定时间后，关闭两个泵
+        send_data = "050604FEFF"
+        b_data = bytearray.fromhex(send_data)
+        dur_time = int(self.serial_frm.frm_pump_prepare_ety.get())
+        self.start_thread_timer(self, self.ser.writeBytes(b_data), dur_time)
+
+
+    def PumpExtract(self):
+        # ...
+        # Extract the bubble Pump 
+        # ...
+        #打开蠕动泵1 50%转速
+        send_data = "0506000100"+"32"+"FEFF"
+        b_data = bytearray.fromhex(send_data)
+        time.sleep(0.1)
+        self.ser.writeBytes(b_data)
+
+    def PumpExe(self):
+        # ...
+        # PrePare and Extract the bubble Pump 
+        # ...
+
+         #打开泡沫泵
+        send_data = "0506010100"+"64"+"FEFF"
+        b_data = bytearray.fromhex(send_data) 
+        self.ser.writeBytes(b_data)
+
+        #0.1s后打开蠕动泵0 50%转速
+        send_data = "0506000100"+"32"+"FEFF"
+        b_data = bytearray.fromhex(send_data)
+        time.sleep(0.1)
+        self.ser.writeBytes(b_data)
+
+        #指定时间后，关闭两个泵
+        send_data = "050604FEFF"
+        b_data = bytearray.fromhex(send_data)
+        dur_time = int(self.serial_frm.frm_pump_prepare_ety.get())
+        self.start_thread_timer(self, self.ser.writeBytes(b_data), dur_time)
+        
+
+         #xs后打开蠕动泵0 50%转速
+        send_data = "0506000100"+"32"+"FEFF"
+        b_data = bytearray.fromhex(send_data)
+
+        self.start_thread_timer(self.ser.writeBytes(b_data),0.1)
+
+    def CuttingExe(self):
+    # ...
+    # cutting paper using ultrasound knife
+    # ...
+        pass
+
     def thread_Cutting(self):
         # 打开文件,向下位机发送数据，并返回起始点
         EndPoint = self.getFilePoints("D:\\CuttingPathFile.txt")
