@@ -109,21 +109,30 @@ class MainSerialTool(MainFrame):
         self.serial_receive_count = 0
         self.serial_frm.frm_right_receive.delete("0.0", "end")
 
+    #回零操作
     def MoveToP0(self):
         '''
         Move to Point0
         '''
-        send_data = "020116650215FEFF"#""#
+        send_data = "0300FEFF"#""#
         b_data = bytearray.fromhex(send_data) 
         self.ser.writeBytes(b_data)
 
         self.serial_frm.frm_status_label["text"] = "layser Move to Point0"
 
+        time.sleep(0.1)
+
+        #回零机械手三个滑台
+        send_data = "050300FEFF"#""#
+        self.DataSend(send_data)
+
     def MoveToP1(self):
         '''
         Move to Point1
         '''
-        send_data = "020001C5134EFEFF"#""#
+        #获取设定速度
+        speed = '{:04X}'.format(int(self.serial_frm.frm_cutting_mspeed_ety.get()))
+        send_data = "020002151450"+speed+"feff"
         b_data = bytearray.fromhex(send_data) 
         self.ser.writeBytes(b_data)
 
@@ -142,14 +151,14 @@ class MainSerialTool(MainFrame):
         if(self.serial_frm.frm_debug_pump_btn["text"]=="泵开"):
 
             self.serial_frm.frm_debug_pump_btn["text"]="泵关"
-            send_data = "0701010258FEFF"#""#
+            send_data = "030201feff"#""#
             b_data = bytearray.fromhex(send_data) 
             self.ser.writeBytes(b_data)
 
             self.serial_frm.frm_status_label["text"] = "pump turn on！"
         else:
             self.serial_frm.frm_debug_pump_btn["text"]="泵开"
-            send_data = "0701000258FEFF"#""#
+            send_data = "030200feff"#""#
             b_data = bytearray.fromhex(send_data) 
             self.ser.writeBytes(b_data)
 
@@ -179,10 +188,10 @@ class MainSerialTool(MainFrame):
         self.ser.writeBytes(b_data)
 
         #指定时间后，关闭两个泵
+        #self.serial_frm.frm_status_label["text"] = "["+ str(datetime.datetime.now()) + " - " + "start timer" + "]"
         send_data = "050604FEFF"
-        b_data = bytearray.fromhex(send_data)
         dur_time = int(self.serial_frm.frm_pump_prepare_ety.get())
-        self.start_thread_timer(self, self.ser.writeBytes(b_data), dur_time)
+        self.start_thread_timer(self.DataSend, dur_time,(send_data,))
 
 
     def PumpExtract(self):
@@ -190,10 +199,16 @@ class MainSerialTool(MainFrame):
         # Extract the bubble Pump 
         # ...
         #打开蠕动泵1 50%转速
-        send_data = "0506000100"+"32"+"FEFF"
+        send_data = "0506020100"+"64"+"FEFF"
         b_data = bytearray.fromhex(send_data)
         time.sleep(0.1)
         self.ser.writeBytes(b_data)
+
+        #指定时间后，关闭泵
+        send_data = "050604FEFF"
+        b_data = bytearray.fromhex(send_data)
+        dur_time = int(self.serial_frm.frm_pump_extract_ety.get())
+        self.start_thread_timer(self.DataSend, dur_time,(send_data,))
 
     def PumpExe(self):
         # ...
@@ -212,17 +227,17 @@ class MainSerialTool(MainFrame):
         self.ser.writeBytes(b_data)
 
         #指定时间后，关闭两个泵
-        send_data = "050604FEFF"
-        b_data = bytearray.fromhex(send_data)
         dur_time = int(self.serial_frm.frm_pump_prepare_ety.get())
-        self.start_thread_timer(self, self.ser.writeBytes(b_data), dur_time)
-        
+        self.start_thread_timer(self.DataSend, dur_time,("050604FEFF",))
 
-         #xs后打开蠕动泵0 50%转速
-        send_data = "0506000100"+"32"+"FEFF"
-        b_data = bytearray.fromhex(send_data)
+        #在同一时间打开蠕动泵1（两个线程并行延时）
+        send_data = "0506020100"+"64"+"FEFF"
+        self.start_thread_timer(self.DataSend, dur_time+0.1,(send_data,))
 
-        self.start_thread_timer(self.ser.writeBytes(b_data),0.1)
+        #指定时间后，关闭泵（三个延时线程并排）
+        send_data = "050604FEFF"
+        dur_time = dur_time + int(self.serial_frm.frm_pump_extract_ety.get())
+        self.start_thread_timer(self.DataSend, dur_time,(send_data,))
 
     def CuttingExe(self):
     # ...
@@ -230,111 +245,145 @@ class MainSerialTool(MainFrame):
     # ...
         pass
 
+    def SetCutterHeight(self):
+        #将超声刀头悬停在指定高度
+        height = float(self.serial_frm.frm_cutting_height_ety.get())
+        str_height = str(hex(int(height*10))).replace("0x","")
+        while len(str_height) < 4:
+            str_height = "0" + str_height
+
+        send_data = "0304"+str_height+"14FEFF"
+        self.start_thread_timer(self.DataSend, 0.1,(send_data,))
+
+
     def thread_Cutting(self):
-        # 打开文件,向下位机发送数据，并返回起始点
-        EndPoint = self.getFilePoints("D:\\CuttingPathFile.txt")
+        # # 打开文件,向下位机发送数据，并返回起始点
+        # EndPoint = self.getFilePoints("D:\\CuttingPathFile.txt")
 
-        #副轴移动到起始点
-        self.threadLock.acquire()
-        self.PaperRapair_rev_flag = 0
-        self.threadLock.release()
+        # #副轴移动到起始点
+        # self.threadLock.acquire()
+        # self.PaperRapair_rev_flag = 0
+        # self.threadLock.release()
 
-        send_data = "0201"+EndPoint
+        # send_data = "0201"+EndPoint
+        # b_data = bytearray.fromhex(send_data) 
+        # self.ser.writeBytes(b_data)
+
+        # while True:
+        #     self.threadLock.acquire()
+
+        #     if self.PaperRapair_rev_flag ==2:
+        #         self.PaperRapair_rev_flag = 0
+
+        #         #激光打开
+        #         send_data = "03000102BCFEFF"
+        #         b_data = bytearray.fromhex(send_data) 
+        #         self.ser.writeBytes(b_data)
+        #         time.sleep(0.1)
+
+        #         #副轴按照轨迹移动
+        #         send_data = "060301FEFF"
+        #         b_data = bytearray.fromhex(send_data) 
+        #         self.ser.writeBytes(b_data)
+
+        #     elif self.PaperRapair_rev_flag ==6:
+        #         self.PaperRapair_rev_flag = 0
+
+        #          #激光关闭
+        #         send_data = "0300000000FEFF"
+        #         b_data = bytearray.fromhex(send_data) 
+        #         self.ser.writeBytes(b_data)
+        #         time.sleep(0.1)
+
+        #         #副轴回到起始点附近
+        #         send_data = "0201"+self.mm2HexCor(940,40)+"FEFF"#""#mm：（940，40）
+        #         b_data = bytearray.fromhex(send_data) 
+        #         self.ser.writeBytes(b_data)
+                
+        #         break
+
+        #     self.threadLock.release()
+        #     time.sleep(0.1)
+        #移动到切割起点
+        # send_data = "020111ee104400fffeff"#""#mm：（940，40）
+        # b_data = bytearray.fromhex(send_data) 
+        # self.ser.writeBytes(b_data)
+
+        #获取移动速度
+        speed = '{:04X}'.format(int(self.serial_frm.frm_cutting_mspeed_ety.get()))
+        #测试切割路径
+        send_data = "0306"+speed+"feff"
         b_data = bytearray.fromhex(send_data) 
         self.ser.writeBytes(b_data)
-
-        while True:
-            self.threadLock.acquire()
-
-            if self.PaperRapair_rev_flag ==2:
-                self.PaperRapair_rev_flag = 0
-
-                #激光打开
-                send_data = "03000102BCFEFF"
-                b_data = bytearray.fromhex(send_data) 
-                self.ser.writeBytes(b_data)
-                time.sleep(0.1)
-
-                #副轴按照轨迹移动
-                send_data = "060301FEFF"
-                b_data = bytearray.fromhex(send_data) 
-                self.ser.writeBytes(b_data)
-
-            elif self.PaperRapair_rev_flag ==6:
-                self.PaperRapair_rev_flag = 0
-
-                 #激光关闭
-                send_data = "0300000000FEFF"
-                b_data = bytearray.fromhex(send_data) 
-                self.ser.writeBytes(b_data)
-                time.sleep(0.1)
-
-                #副轴回到起始点附近
-                send_data = "0201"+self.mm2HexCor(940,40)+"FEFF"#""#mm：（940，40）
-                b_data = bytearray.fromhex(send_data) 
-                self.ser.writeBytes(b_data)
-                
-                break
-
-            self.threadLock.release()
-            time.sleep(0.1)
         
 
 
     def thread_Spraying(self):
-        # 打开文件,向下位机发送数据，并返回起始点
-        EndPoint = self.getFilePoints("D:\\SprayingPathFile.txt")
+        # # 打开文件,向下位机发送数据，并返回起始点
+        # EndPoint = self.getFilePoints("D:\\SprayingPathFile.txt")
 
-        #主轴移动到起始点
-        self.threadLock.acquire()
-        self.PaperRapair_rev_flag = 0
-        self.threadLock.release()
+        # #主轴移动到起始点
+        # self.threadLock.acquire()
+        # self.PaperRapair_rev_flag = 0
+        # self.threadLock.release()
 
-        send_data = "0200"+EndPoint
+        # send_data = "0200"+EndPoint
+        # b_data = bytearray.fromhex(send_data) 
+        # self.ser.writeBytes(b_data)
+
+        # while True:
+        #     self.threadLock.acquire()
+
+        #     if self.PaperRapair_rev_flag ==2:
+        #         self.PaperRapair_rev_flag = 0
+
+        #         #泵打开
+        #         self.serial_frm.frm_debug_pump_btn["text"]="泵关"
+        #         send_data = "0701010258FEFF"#""#
+        #         b_data = bytearray.fromhex(send_data) 
+        #         self.ser.writeBytes(b_data)
+        #         self.serial_frm.frm_status_label["text"] = "pump turn on！"
+                
+        #         time.sleep(0.2)
+
+        #         #主轴按照轨迹移动
+        #         send_data = "060300FEFF"
+        #         b_data = bytearray.fromhex(send_data) 
+        #         self.ser.writeBytes(b_data)
+
+        #     elif self.PaperRapair_rev_flag ==6:
+        #         self.PaperRapair_rev_flag = 0
+
+        #          #泵关闭
+        #         self.serial_frm.frm_debug_pump_btn["text"]="泵开"
+        #         send_data = "0701000258FEFF"#""#
+        #         b_data = bytearray.fromhex(send_data) 
+        #         self.ser.writeBytes(b_data)
+        #         self.serial_frm.frm_status_label["text"] = "pump turn off！"
+
+        #         time.sleep(0.1)
+
+        #         #主轴回到喷胶点附近
+        #         send_data = "0200"+self.mm2HexCor(51,556)+"FEFF"#""#mm：
+        #         b_data = bytearray.fromhex(send_data) 
+        #         self.ser.writeBytes(b_data)
+                
+        #         break
+
+        #     self.threadLock.release()
+        #     time.sleep(0.1)
+
+        # 移动到轨迹起点
+        # send_data = "020017940e1400fffeff"#""#mm：(1794,0e14)
+        # b_data = bytearray.fromhex(send_data) 
+        # self.ser.writeBytes(b_data)
+
+        #获取移动速度
+        speed = '{:04X}'.format(int(self.serial_frm.frm_cutting_mspeed_ety.get()))
+        # 开始涂胶移动
+        send_data = "0307"+ speed +"FEFF"
         b_data = bytearray.fromhex(send_data) 
         self.ser.writeBytes(b_data)
-
-        while True:
-            self.threadLock.acquire()
-
-            if self.PaperRapair_rev_flag ==2:
-                self.PaperRapair_rev_flag = 0
-
-                #泵打开
-                self.serial_frm.frm_debug_pump_btn["text"]="泵关"
-                send_data = "0701010258FEFF"#""#
-                b_data = bytearray.fromhex(send_data) 
-                self.ser.writeBytes(b_data)
-                self.serial_frm.frm_status_label["text"] = "pump turn on！"
-                
-                time.sleep(0.2)
-
-                #主轴按照轨迹移动
-                send_data = "060300FEFF"
-                b_data = bytearray.fromhex(send_data) 
-                self.ser.writeBytes(b_data)
-
-            elif self.PaperRapair_rev_flag ==6:
-                self.PaperRapair_rev_flag = 0
-
-                 #泵关闭
-                self.serial_frm.frm_debug_pump_btn["text"]="泵开"
-                send_data = "0701000258FEFF"#""#
-                b_data = bytearray.fromhex(send_data) 
-                self.ser.writeBytes(b_data)
-                self.serial_frm.frm_status_label["text"] = "pump turn off！"
-
-                time.sleep(0.1)
-
-                #主轴回到喷胶点附近
-                send_data = "0200"+self.mm2HexCor(51,556)+"FEFF"#""#mm：
-                b_data = bytearray.fromhex(send_data) 
-                self.ser.writeBytes(b_data)
-                
-                break
-
-            self.threadLock.release()
-            time.sleep(0.1)
 
 
     def getFilePoints(self,filepath):
@@ -396,6 +445,12 @@ class MainSerialTool(MainFrame):
             self.ser.writeBytes(b_data)
 
             self.serial_frm.frm_status_label["text"] = "Continue Move！"
+
+    def DataSend(self,data):
+
+        b_data = bytearray.fromhex(data) 
+        self.ser.writeBytes(b_data)
+        self.serial_frm.frm_status_label["text"] = "["+ str(datetime.datetime.now()) + " - " + data + "]"
 
 
     def serial_toggle(self):

@@ -83,6 +83,7 @@ class MainFrame(object):
         self.serial_frm.frm_pump_extract_btn["command"] = self.PumpExtract
         self.serial_frm.frm_pump_exe_btn["command"] = self.PumpExe
         self.serial_frm.frm_cutting_exe_btn["command"] = self.CuttingExe
+        self.serial_frm.frm_cutting_cutterheight_btn["command"] = self.SetCutterHeight
 
 
     def Toggle(self, event=None):
@@ -170,18 +171,24 @@ class MainFrame(object):
         pass
 
     def CuttingExe(self):
-    # ...
-    # cutting paper using ultrasound knife
-    # ...
+        # ...
+        # cutting paper using ultrasound knife
+        # ...
+        pass
+
+    def SetCutterHeight(self):
+        # ...
+        # set the ultrasound knife height
+        # ...
         pass
 
 
 
-    def start_thread_timer(self, callback, timer=1):
+    def start_thread_timer(self, callback, timer=1,args=None):
         '''
         util: start thread timer
         '''
-        temp_thread = threading.Timer(timer, callback)
+        temp_thread = threading.Timer(timer, callback,args)
         temp_thread.setDaemon(True)
         temp_thread.start()
 

@@ -251,7 +251,7 @@ class SerialFrame(object):
 
         self.frm_debug_buttonset_frm = pytk.PyLabelFrame(self.frm_debug,text="debug button")
         self.frm_debug_point0_btn = pytk.PyButton(self.frm_debug_buttonset_frm,
-                                                 text="定点0",
+                                                 text="回零",
                                                  width=10,
                                                  font=g_font)
         self.frm_debug_point1_btn = pytk.PyButton(self.frm_debug_buttonset_frm,
@@ -298,6 +298,10 @@ class SerialFrame(object):
                                                  width=10,
                                                  font=g_font)
         self.frm_cutting_height_ety = pytk.PyEntry(self.frm_debug_cutting_frm, font=g_font)
+
+        self.frm_cutting_mspeed_label = pytk.PyLabel(self.frm_debug_cutting_frm, text="全局移动速度：(us)",font=g_font)
+        self.frm_cutting_mspeed_ety = pytk.PyEntry(self.frm_debug_cutting_frm, font=g_font)
+
         self.frm_cutting_exe_btn = pytk.PyButton(self.frm_debug_cutting_frm,
                                                  text="轨迹执行",
                                                  width=10,
@@ -322,10 +326,12 @@ class SerialFrame(object):
         self.frm_pump_exe_btn.grid(row=2,column=0,columnspan=2,padx=(10,0),pady=10)
 
         self.frm_debug_cutting_frm.pack(fill="both", expand=1,side=tk.LEFT)
-        #self.frm_cutting_cutterheight_btn.pack(fill="both", expand=0, padx=5, pady=5, side=tk.LEFT)
         self.frm_cutting_cutterheight_btn.grid(row=0,column=0,padx=(10,0),pady=10)
         self.frm_cutting_height_ety.grid(row=0,column=1,padx=(10,0),pady=10)
-        self.frm_cutting_exe_btn.grid(row=1,column=0,columnspan=2,padx=(10,0),pady=10)
+        self.frm_cutting_mspeed_label.grid(row=1,column=0,padx=(10,0),pady=10)
+        self.frm_cutting_mspeed_ety.grid(row=1,column=1,padx=(10,0),pady=10)
+        self.frm_cutting_exe_btn.grid(row=2,column=0,columnspan=2,padx=(10,0),pady=10)
+
 
 
 

@@ -70,6 +70,7 @@ class SerialHelper(object):
     #直接发送bytes
     def writeBytes(self, data):
         if self._is_connected:
+            
             self._serial.write(bytes(data))
 
 
