@@ -81,8 +81,8 @@ while lastPageFinished == False:
             imageFile.close()
 
     else:
-        print("cannot find image file! please check url")
-        break
+        print("cannot find image file in this url! please check it")
+        continue
 
     if not (EndPage in url):
         nextLink = soup.select('a[rel="next"]')

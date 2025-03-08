@@ -13,21 +13,22 @@ def index():
     return 'hello word!'
 
 # 邦文接口
-@app.route('/type=getUserInfoByCardNumForGLC&cardNum=9F4EC424', methods=['GET', ])
-def CardLogin():
+@app.route('/type=getUserInfoByCardNumForGLC&cardNum=<cardnum>', methods=['GET', ])
+def CardLogin(cardnum):
+    print(cardnum)
     return {
-        "birthday": "1953-12-22",
-        "sex": 2,
+        "birthday": "1998-12-22",
+        "sex": 1,
         "risk": 0,
         "username": "anni",
         "subver": 0,
         "unitprice": 0.0,
         "addver": 0,
         "error": "",
-        "height": 163.0,
+        "height": 175.0,
         "mainver": 0,
-        "weight": 52,
-        "userid": 6,
+        "weight": 60,
+        "userid": 0,
         "vicever": 0,
         "hrrest": 0,
         "ntrname": "张三"}
@@ -35,7 +36,22 @@ def CardLogin():
     #     "msg": "success",
     #     "data": "welcome to use flask."
     
-#博谐接口
+#邦文上传
+@app.route('/type=uploadTestDataFromGLC', methods=['POST'])
+def PrintPost():
+    if request.method == 'POST':
+        data = request.get_data()
+        print(data)
+        json_data = json.loads(data.decode("utf-8"))
+        print(json_data)
+        return {
+            "msg": "success",
+            "value": "0",
+            "code": 200,
+            "state": "1"
+        }
+    
+#博谐/健康中心接口
 @app.route('/userinfo', methods=['GET', ])
 def BoxieLogin():
 
@@ -61,12 +77,12 @@ def BoxieLogin():
     #     "msg": "success",
     #     "data": "welcome to use flask."
 
-#邦文上传
+#博谐上传
 @app.route('/tph/service/cycle/test.json', methods=['POST'])
-def PrintPost():
+def PrintUploadPost():
     if request.method == 'POST':
         data = request.get_data()
-        print(data)
+        #print(data)
         json_data = json.loads(data.decode("utf-8"))
         print(json_data)
         return {

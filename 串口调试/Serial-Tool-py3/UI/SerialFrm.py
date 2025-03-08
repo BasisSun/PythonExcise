@@ -44,6 +44,7 @@ class SerialFrame(object):
         self.create_frm_status()
         self.create_frm_debug()
 
+
     def create_frm_top(self):
         '''
         上半部分窗口分为左右2个部分
@@ -128,7 +129,7 @@ class SerialFrame(object):
         self.frm_left_combobox_databit.pack(fill="both", expand=1, padx=5, pady=5)
         self.frm_left_combobox_stopbit.pack(fill="both", expand=1, padx=5, pady=5)
 
-        self.frm_left_combobox_baudrate.current(3)
+        self.frm_left_combobox_baudrate.current(10)
         self.frm_left_combobox_parity.current(0)
         self.frm_left_combobox_databit.current(3)
         self.frm_left_combobox_stopbit.current(0)
@@ -247,38 +248,91 @@ class SerialFrame(object):
 
     def create_frm_debug(self):
          #调试栏窗口
-        self.frm_debug_point0_btn = pytk.PyButton(self.frm_debug,
-                                                 text="定点0",
+
+        self.frm_debug_buttonset_frm = pytk.PyLabelFrame(self.frm_debug,text="debug button")
+        self.frm_debug_point0_btn = pytk.PyButton(self.frm_debug_buttonset_frm,
+                                                 text="回零",
                                                  width=10,
                                                  font=g_font)
-        self.frm_debug_point1_btn = pytk.PyButton(self.frm_debug,
+        self.frm_debug_point1_btn = pytk.PyButton(self.frm_debug_buttonset_frm,
                                                  text="定点1",
                                                  width=10,
                                                  font=g_font)
-        self.frm_debug_move_btn = pytk.PyButton(self.frm_debug,
+        self.frm_debug_move_btn = pytk.PyButton(self.frm_debug_buttonset_frm,
                                                  text="轨迹涂胶",
                                                  width=10,
                                                  font=g_font)
-        self.frm_debug_pump_btn = pytk.PyButton(self.frm_debug,
+        self.frm_debug_pump_btn = pytk.PyButton(self.frm_debug_buttonset_frm,
                                                  text="泵开",
                                                  width=10,
                                                  font=g_font)
-        self.frm_debug_cut_btn = pytk.PyButton(self.frm_debug,
+        self.frm_debug_cut_btn = pytk.PyButton(self.frm_debug_buttonset_frm,
                                                     text="轨迹切割",
                                                     width=10,
                                                     font=g_font)
-        self.frm_debug_stop_btn = pytk.PyButton(self.frm_debug,
+        self.frm_debug_stop_btn = pytk.PyButton(self.frm_debug_buttonset_frm,
                                                     text="暂停",
                                                     width=10,
                                                     font=g_font)
+
+        self.frm_debug_pump_frm = pytk.PyLabelFrame(self.frm_debug,text="pump debug")
+        self.frm_pump_prepare_btn = pytk.PyButton(self.frm_debug_pump_frm,
+                                                 text="泡沫准备(s)",
+                                                 width=10,
+                                                 font=g_font)
+        self.frm_pump_prepare_ety = pytk.PyEntry(self.frm_debug_pump_frm, font=g_font)
+        self.frm_pump_extract_btn = pytk.PyButton(self.frm_debug_pump_frm,
+                                                 text="抽取准备(s)",
+                                                 width=10,
+                                                 font=g_font)
+        self.frm_pump_extract_ety = pytk.PyEntry(self.frm_debug_pump_frm, font=g_font)
+        self.frm_pump_exe_btn = pytk.PyButton(self.frm_debug_pump_frm,
+                                                 text="全部执行",
+                                                 width=10,
+                                                 font=g_font)
+
+
+        self.frm_debug_cutting_frm = pytk.PyLabelFrame(self.frm_debug,text="cutting debug")
+        self.frm_cutting_cutterheight_btn = pytk.PyButton(self.frm_debug_cutting_frm,
+                                                 text="刀具高度(mm)",
+                                                 width=10,
+                                                 font=g_font)
+        self.frm_cutting_height_ety = pytk.PyEntry(self.frm_debug_cutting_frm, font=g_font)
+
+        self.frm_cutting_mspeed_label = pytk.PyLabel(self.frm_debug_cutting_frm, text="全局移动速度：(us)",font=g_font)
+        self.frm_cutting_mspeed_ety = pytk.PyEntry(self.frm_debug_cutting_frm, font=g_font)
+
+        self.frm_cutting_exe_btn = pytk.PyButton(self.frm_debug_cutting_frm,
+                                                 text="轨迹执行",
+                                                 width=10,
+                                                 font=g_font)
+
                                                  
 
-        self.frm_debug_point0_btn.pack(fill="both", expand=0, padx=5, pady=5, side=tk.LEFT)
-        self.frm_debug_point1_btn.pack(fill="both", expand=0, padx=5, pady=5, side=tk.LEFT)
-        self.frm_debug_move_btn.pack(fill="both", expand=0, padx=5, pady=5, side=tk.LEFT)
-        self.frm_debug_pump_btn.pack(fill="both", expand=0, padx=5, pady=5, side=tk.LEFT)
-        self.frm_debug_cut_btn.pack(fill="both", expand=0, padx=5, pady=5, side=tk.LEFT)
-        self.frm_debug_stop_btn.pack(fill="both", expand=0, padx=5, pady=5, side=tk.LEFT)
+        self.frm_debug_buttonset_frm.pack(fill="none", expand=0, padx=5, pady=5, side=tk.LEFT)
+        self.frm_debug_point0_btn.pack(fill="none", expand=0, padx=5, pady=5, side=tk.TOP)
+        self.frm_debug_point1_btn.pack(fill="none", expand=0, padx=5, pady=5, side=tk.TOP)
+        self.frm_debug_move_btn.pack(fill="none", expand=0, padx=5, pady=5, side=tk.TOP)
+        self.frm_debug_pump_btn.pack(fill="none", expand=0, padx=5, pady=5, side=tk.TOP)
+        self.frm_debug_cut_btn.pack(fill="none", expand=0, padx=5, pady=5, side=tk.TOP)
+        self.frm_debug_stop_btn.pack(fill="none", expand=0, padx=5, pady=5, side=tk.TOP)
+
+        self.frm_debug_pump_frm.pack(fill="both", expand=1,side=tk.LEFT)
+        #self.frm_pump_prepare_btn.pack(fill="both", expand=0, padx=5, pady=5, side=tk.LEFT)
+        self.frm_pump_prepare_btn.grid(row=0,column=0,padx=(10,0),pady=10)
+        self.frm_pump_prepare_ety.grid(row=0,column=1,padx=(10,0),pady=10)
+        self.frm_pump_extract_btn.grid(row=1,column=0,padx=(10,0),pady=10)
+        self.frm_pump_extract_ety.grid(row=1,column=1,padx=(10,0),pady=10)
+        self.frm_pump_exe_btn.grid(row=2,column=0,columnspan=2,padx=(10,0),pady=10)
+
+        self.frm_debug_cutting_frm.pack(fill="both", expand=1,side=tk.LEFT)
+        self.frm_cutting_cutterheight_btn.grid(row=0,column=0,padx=(10,0),pady=10)
+        self.frm_cutting_height_ety.grid(row=0,column=1,padx=(10,0),pady=10)
+        self.frm_cutting_mspeed_label.grid(row=1,column=0,padx=(10,0),pady=10)
+        self.frm_cutting_mspeed_ety.grid(row=1,column=1,padx=(10,0),pady=10)
+        self.frm_cutting_exe_btn.grid(row=2,column=0,columnspan=2,padx=(10,0),pady=10)
+
+
 
 
     def Toggle(self):
